@@ -1,0 +1,1 @@
+import{f as r,a as e}from"../chunks/B0FDQ0ax.js";import"../chunks/Cd-0_WxI.js";import{E as m,F as s}from"../chunks/DQ0hcwHw.js";var n=r('<h2></h2> <img src="/images/chowchow_nobg.png" alt="Chow chow failed to load :(" class="svelte-1au5gs3"/>',1);function c(a){var o=n(),t=m(o);t.textContent="Hemlo!",s(2),e(a,o)}export{c as component};

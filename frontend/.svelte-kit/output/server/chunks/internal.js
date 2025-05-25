@@ -1,4 +1,5 @@
-import { o as object_prototype, a as array_prototype, U as UNINITIALIZED, g as get_descriptor, b as get_prototype_of, i as is_array, s as safe_equals, e as equals, H as HYDRATION_ERROR, c as is_extensible, r as run_all, d as index_of, f as define_property, h as HYDRATION_START, j as HYDRATION_END, k as array_from, l as render, p as push$1, m as setContext, n as pop$1 } from "./index.js";
+import { o as object_prototype, a as array_prototype, g as get_descriptor, b as get_prototype_of, i as is_array, s as safe_equals, e as equals, c as is_extensible, r as run_all, d as index_of, f as define_property, h as array_from } from "./equality.js";
+import { U as UNINITIALIZED, H as HYDRATION_ERROR, a as HYDRATION_START, b as HYDRATION_END, r as render, p as push$1, s as setContext, c as pop$1 } from "./index.js";
 import "clsx";
 const BROWSER = false;
 let base = "";
@@ -1656,7 +1657,7 @@ const options = {
   root,
   service_worker: false,
   templates: {
-    app: ({ head, body, assets: assets2, nonce, env }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="' + assets2 + '/favicon.png" />\n		<meta name="viewport" content="width=device-width, initial-scale=1" />\n		' + head + '\n	</head>\n	<body data-sveltekit-preload-data="hover">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>\n",
+    app: ({ head, body, assets: assets2, nonce, env }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="' + assets2 + '/favicon.png" />\n		<meta name="viewport" content="width=device-width, initial-scale=1" />\n		' + head + '\n		<style>\n			body {\n				padding: 0;\n				margin: 0;\n				background-color: #f2ecbc;\n			}\n		</style>\n	</head>\n	<body data-sveltekit-preload-data="hover">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>\n",
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -1728,7 +1729,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "d62mkz"
+  version_hash: "xv2roy"
 };
 async function get_hooks() {
   let handle;

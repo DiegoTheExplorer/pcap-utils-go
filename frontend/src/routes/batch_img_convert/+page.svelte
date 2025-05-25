@@ -1,16 +1,28 @@
 <script lang="ts">
 	// Reactive page element values
+	import { Get_dir_path } from '../../lib/wailsjs/go/main/App.js';
 	let convertion_percentage = $state(0);
 	let prog_bar_len = $state('');
+	let inp_dir = $state('');
+	let out_dir = $state('');
+
+	async function update_dir_path(is_inp_dir: boolean) {
+		if (is_inp_dir) {
+			inp_dir = await Get_dir_path('Select Input Folder');
+			console.log(inp_dir);
+		} else {
+			out_dir = await Get_dir_path('Select Output Folder');
+		}
+	}
 </script>
 
 <div class="outer_container">
 	<h2>Batch Image Convert</h2>
 	<div class="input_fields">
-		<h4>Current Input Folder:</h4>
-		<button> Select Input Folder </button>
-		<h4>Current Output Folder:</h4>
-		<button> Select Output Folder </button>
+		<button onclick={() => update_dir_path(true)}> Select Input Folder </button>
+		<h4>Current Input Folder: {inp_dir}</h4>
+		<button onclick={() => update_dir_path(false)}> Select Output Folder</button>
+		<h4>Current Output Folder: {out_dir}</h4>
 	</div>
 
 	<div class="status">

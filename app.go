@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"pcap-utils-go/gomods/utils/fs_prompts"
 )
 
 // App struct
@@ -41,4 +42,9 @@ func (a *App) shutdown(ctx context.Context) {
 // Greet returns a greeting for the given name
 func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
+}
+
+func (a *App) Get_dir_path(title string) string {
+	dir_path := fs_prompts.Get_directory_path(a.ctx, title)
+	return dir_path
 }

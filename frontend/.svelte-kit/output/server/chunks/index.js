@@ -1,29 +1,4 @@
 import "clsx";
-var is_array = Array.isArray;
-var index_of = Array.prototype.indexOf;
-var array_from = Array.from;
-var define_property = Object.defineProperty;
-var get_descriptor = Object.getOwnPropertyDescriptor;
-var object_prototype = Object.prototype;
-var array_prototype = Array.prototype;
-var get_prototype_of = Object.getPrototypeOf;
-var is_extensible = Object.isExtensible;
-const noop = () => {
-};
-function run_all(arr) {
-  for (var i = 0; i < arr.length; i++) {
-    arr[i]();
-  }
-}
-function equals(value) {
-  return value === this.v;
-}
-function safe_not_equal(a, b) {
-  return a != a ? b == b : a !== b || a !== null && typeof a === "object" || typeof a === "function";
-}
-function safe_equals(value) {
-  return !safe_not_equal(value, this.v);
-}
 const HYDRATION_START = "[";
 const HYDRATION_END = "]";
 const HYDRATION_ERROR = {};
@@ -32,6 +7,55 @@ function lifecycle_outside_component(name) {
   {
     throw new Error(`https://svelte.dev/e/lifecycle_outside_component`);
   }
+}
+const ATTR_REGEX = /[&"<]/g;
+const CONTENT_REGEX = /[&<]/g;
+function escape_html(value, is_attr) {
+  const str = String(value ?? "");
+  const pattern = is_attr ? ATTR_REGEX : CONTENT_REGEX;
+  pattern.lastIndex = 0;
+  let escaped = "";
+  let last = 0;
+  while (pattern.test(str)) {
+    const i = pattern.lastIndex - 1;
+    const ch = str[i];
+    escaped += str.substring(last, i) + (ch === "&" ? "&amp;" : ch === '"' ? "&quot;" : "&lt;");
+    last = i + 1;
+  }
+  return escaped + str.substring(last);
+}
+function append_styles(styles, important = false) {
+  var separator = important ? " !important;" : ";";
+  var css = "";
+  for (var key in styles) {
+    var value = styles[key];
+    if (value != null && value !== "") {
+      css += " " + key + ": " + value + separator;
+    }
+  }
+  return css;
+}
+function to_style(value, styles) {
+  if (styles) {
+    var new_style = "";
+    var normal_styles;
+    var important_styles;
+    if (Array.isArray(styles)) {
+      normal_styles = styles[0];
+      important_styles = styles[1];
+    } else {
+      normal_styles = styles;
+    }
+    if (normal_styles) {
+      new_style += append_styles(normal_styles);
+    }
+    if (important_styles) {
+      new_style += append_styles(important_styles, true);
+    }
+    new_style = new_style.trim();
+    return new_style === "" ? null : new_style;
+  }
+  return String(value);
 }
 var current_component = null;
 function getContext(key) {
@@ -134,28 +158,20 @@ function render(component, options = {}) {
     body: payload.out
   };
 }
+function attr_style(value, directives) {
+  var result = to_style(value, directives);
+  return result ? ` style="${escape_html(result, true)}"` : "";
+}
 export {
   HYDRATION_ERROR as H,
   UNINITIALIZED as U,
-  array_prototype as a,
-  get_prototype_of as b,
-  is_extensible as c,
-  index_of as d,
-  equals as e,
-  define_property as f,
-  get_descriptor as g,
-  HYDRATION_START as h,
-  is_array as i,
-  HYDRATION_END as j,
-  array_from as k,
-  render as l,
-  setContext as m,
-  pop as n,
-  object_prototype as o,
+  HYDRATION_START as a,
+  HYDRATION_END as b,
+  pop as c,
+  attr_style as d,
+  escape_html as e,
+  getContext as g,
   push as p,
-  noop as q,
-  run_all as r,
-  safe_equals as s,
-  getContext as t,
-  safe_not_equal as u
+  render as r,
+  setContext as s
 };
