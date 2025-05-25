@@ -12,7 +12,6 @@ func Hello() {
 }
 
 func Get_directory_path(ctx context.Context, title string) string {
-	fmt.Println("In fs_promps module")
 	dir_path, err := runtime.OpenDirectoryDialog(ctx, runtime.OpenDialogOptions{
 		Title: title,
 	})

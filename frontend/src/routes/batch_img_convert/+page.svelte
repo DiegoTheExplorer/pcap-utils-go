@@ -2,7 +2,11 @@
 	// Reactive page element values
 	import { Get_dir_path } from '../../lib/wailsjs/go/main/App.js';
 	let convertion_percentage = $state(0);
-	let prog_bar_len = $state('');
+	let prog_bar_len = $derived.by(() => {
+		let num_px = convertion_percentage * 200;
+		let width_str = num_px.toString() + 'px';
+		return width_str;
+	});
 	let inp_dir = $state('');
 	let out_dir = $state('');
 

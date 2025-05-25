@@ -3,7 +3,7 @@ frontend/node_modules
 # Output
 .output
 frontend/build
-build
+build/*
 
 # OS
 .DS_Store
