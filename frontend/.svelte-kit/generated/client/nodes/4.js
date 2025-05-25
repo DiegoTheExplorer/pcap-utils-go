@@ -1,0 +1,1 @@
+export { default as component } from "../../../../src/routes/batch_img_convert/+page.svelte";

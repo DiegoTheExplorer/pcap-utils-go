@@ -1,0 +1,15 @@
+{
+	"/": [
+		"src/routes/+layout.ts",
+		"src/routes/+layout.ts"
+	],
+	"/about": [
+		"src/routes/+layout.ts"
+	],
+	"/batch_img_convert": [
+		"src/routes/+layout.ts"
+	],
+	"/name_verification": [
+		"src/routes/+layout.ts"
+	]
+}
