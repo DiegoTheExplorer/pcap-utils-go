@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { beforeNavigate } from '$app/navigation';
+
 	// Reactive page element values
 	import { Get_dir_path } from '../../lib/wailsjs/go/main/App.js';
+	import { Batch_img_conv } from '../../lib/wailsjs/go/main/App.js';
 	let convertion_percentage = $state(0);
 	let prog_bar_len = $derived.by(() => {
 		let num_px = convertion_percentage * 200;
@@ -9,14 +12,36 @@
 	});
 	let inp_dir = $state('');
 	let out_dir = $state('');
+	let disable_conv_btn = $state(false);
+	let unconverted_files = $state(['']);
+
+	// disables routing during image conversion
+	beforeNavigate(({ cancel }) => {
+		if (disable_conv_btn) {
+			cancel();
+		}
+	});
 
 	async function update_dir_path(is_inp_dir: boolean) {
 		if (is_inp_dir) {
 			inp_dir = await Get_dir_path('Select Input Folder');
-			console.log(inp_dir);
 		} else {
 			out_dir = await Get_dir_path('Select Output Folder');
 		}
+	}
+
+	async function batch_img_conv() {
+		disable_conv_btn = true;
+		Batch_img_conv(inp_dir, out_dir)
+			.then((res) => {
+				unconverted_files = res;
+				disable_conv_btn = false;
+			})
+			.catch((e) => {
+				// TODO: add error display to gui and logging
+				console.log(e);
+				disable_conv_btn = false;
+			});
 	}
 </script>
 
@@ -27,6 +52,7 @@
 		<h4>Current Input Folder: {inp_dir}</h4>
 		<button onclick={() => update_dir_path(false)}> Select Output Folder</button>
 		<h4>Current Output Folder: {out_dir}</h4>
+		<button disabled={disable_conv_btn} onclick={() => batch_img_conv()}> Start Conversion </button>
 	</div>
 
 	<div class="status">
@@ -39,7 +65,14 @@
 		</div>
 	</div>
 
-	<div class="errors"></div>
+	<div class="errors">
+		<h3>Unconverted files or sub directories</h3>
+		<ul>
+			{#each unconverted_files as fname}
+				<li>{fname}</li>
+			{/each}
+		</ul>
+	</div>
 </div>
 
 <style>

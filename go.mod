@@ -1,10 +1,14 @@
 module pcap-utils-go
 
-go 1.22.0
+go 1.23.0
 
-toolchain go1.24.1
+toolchain go1.24.3
 
-require github.com/wailsapp/wails/v2 v2.10.1
+require (
+	github.com/jdeng/goheif v0.0.0-20241115163857-e2bbb197c985
+	github.com/wailsapp/wails/v2 v2.10.1
+	golang.org/x/image v0.27.0
+)
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
@@ -32,7 +36,7 @@ require (
 	golang.org/x/crypto v0.33.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
-	golang.org/x/text v0.22.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
 )
 
 // replace github.com/wailsapp/wails/v2 v2.10.1 => C:\Users\DMVil\go\pkg\mod

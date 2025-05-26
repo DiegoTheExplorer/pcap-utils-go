@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"pcap-utils-go/gomods/sub_app/batch_img_conv"
 	"pcap-utils-go/gomods/utils/fs_prompts"
 )
 
@@ -47,4 +48,14 @@ func (a *App) Greet(name string) string {
 func (a *App) Get_dir_path(title string) string {
 	dir_path := fs_prompts.Get_directory_path(a.ctx, title)
 	return dir_path
+}
+
+func (a *App) Batch_img_conv(inp_dir string, out_dir string) ([]string, error) {
+	undecoded_files, err := batch_img_conv.BatchConvert(inp_dir, out_dir)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return undecoded_files, err
 }

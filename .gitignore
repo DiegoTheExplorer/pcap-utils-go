@@ -3,6 +3,7 @@ frontend/node_modules
 # Output
 .output
 frontend/build
+frontend/.svelte-kit
 build/*
 build
 
