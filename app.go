@@ -51,7 +51,7 @@ func (a *App) Get_dir_path(title string) string {
 }
 
 func (a *App) Batch_img_conv(inp_dir string, out_dir string) ([]string, error) {
-	undecoded_files, err := batch_img_conv.BatchConvert(inp_dir, out_dir)
+	undecoded_files, err := batch_img_conv.BatchConvert(inp_dir, out_dir, a.ctx)
 
 	if err != nil {
 		return nil, err

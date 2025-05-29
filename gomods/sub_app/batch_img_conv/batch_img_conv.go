@@ -1,6 +1,7 @@
 package batch_img_conv
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"image"
@@ -13,11 +14,12 @@ import (
 	"strings"
 
 	"github.com/jdeng/goheif"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"golang.org/x/image/tiff"
 	"golang.org/x/image/webp"
 )
 
-func BatchConvert(inp_dir string, out_dir string) ([]string, error) {
+func BatchConvert(inp_dir string, out_dir string, ctx context.Context) ([]string, error) {
 	if inp_dir == "" {
 		return nil, fmt.Errorf("Input directory is blank")
 	}
@@ -29,11 +31,20 @@ func BatchConvert(inp_dir string, out_dir string) ([]string, error) {
 	var inp_paths []string
 	var undecoded_paths []string
 
-	var total_file_count int = 0
-	err := filepath.WalkDir(inp_dir, func(fp string, file fs.DirEntry, err error) error {
-		total_file_count++
+	// HACK:ReadDir then WalkDir is redundant
+	path_list, err := os.ReadDir(inp_dir)
+	if err != nil {
+		return nil, err
+	}
+	total_file_count := len(path_list)
+	var conversion_progress int
+
+	err = filepath.WalkDir(inp_dir, func(fp string, file fs.DirEntry, err error) error {
+		conversion_progress++
+		conversion_percentage := float32(conversion_progress) / float32(total_file_count)
 		if file.IsDir() {
 			undecoded_paths = append(undecoded_paths, file.Name())
+			runtime.EventsEmit(ctx, "conversion-progress", conversion_percentage)
 			return nil
 		}
 		inp_paths = append(inp_paths, fp)
@@ -44,10 +55,12 @@ func BatchConvert(inp_dir string, out_dir string) ([]string, error) {
 
 		if err != nil {
 			undecoded_paths = append(undecoded_paths, file.Name())
+			runtime.EventsEmit(ctx, "conversion-progress", conversion_percentage)
 			return nil
 		}
 
-		fmt.Println("Jpeg encoding success for: ", filepath.Base(fp))
+		// fmt.Println("Jpeg encoding success for: ", filepath.Base(fp))
+		runtime.EventsEmit(ctx, "conversion-progress", conversion_percentage)
 		return nil
 	})
 
@@ -55,12 +68,12 @@ func BatchConvert(inp_dir string, out_dir string) ([]string, error) {
 		return nil, err
 	}
 
-	fmt.Println("Undecoded Paths: ")
-	for _, file_name := range undecoded_paths {
-		fmt.Println(file_name)
-	}
-	fmt.Println("Total undecoded paths: ", len(undecoded_paths))
-	fmt.Println("Total number of files: ", total_file_count)
+	//fmt.Println("Undecoded Paths: ")
+	// for _, file_name := range undecoded_paths {
+	// 	fmt.Println(file_name)
+	// }
+	//fmt.Println("Total undecoded paths: ", len(undecoded_paths))
+	//fmt.Println("Total number of files: ", total_file_count)
 
 	return undecoded_paths, nil
 }
@@ -142,7 +155,7 @@ func bruteForceDecode(img_file *os.File) (image.Image, error) {
 	}
 	img_file.Seek(0, 0)
 
-	return nil, fmt.Errorf("File extension does not match image encoding")
+	return nil, fmt.Errorf("Could not decode image with available decoders")
 }
 
 func convertToJpeg(fp string, file_extension string, out_dir string) error {
