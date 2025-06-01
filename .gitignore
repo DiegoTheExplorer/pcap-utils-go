@@ -20,3 +20,5 @@ Thumbs.db
 # Vite
 frontent/vite.config.js.timestamp-*
 frontend/vite.config.ts.timestamp-*
+frontend/.svelte-kit
+frontend/.svelte-kit

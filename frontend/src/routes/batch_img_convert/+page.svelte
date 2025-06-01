@@ -32,8 +32,7 @@
 
 	// Event Handlers
 	EventsOn('conversion-progress', (prog) => {
-		//console.log(prog);
-		conversion_percentage = prog > 1 ? 100 : prog * 100;
+		conversion_percentage = prog >= 1 ? 1 : prog * 0.1;
 	});
 
 	async function update_dir_path(is_inp_dir: boolean) {
@@ -79,7 +78,7 @@
 		<div id="prog">
 			<div id="prog_bar_lbl">Progress:</div>
 			<div id="prog_border">
-				<div id="prog_bar" style:width={prog_bar_len}>{conversion_percentage}%</div>
+				<div id="prog_bar" style:width={prog_bar_len}>{conversion_percentage * 100}%</div>
 			</div>
 		</div>
 	</div>

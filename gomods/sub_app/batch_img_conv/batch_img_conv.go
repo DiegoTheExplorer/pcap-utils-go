@@ -8,6 +8,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io/fs"
+	"math"
 	"os"
 	"path"
 	"path/filepath"
@@ -41,7 +42,7 @@ func BatchConvert(inp_dir string, out_dir string, ctx context.Context) ([]string
 
 	err = filepath.WalkDir(inp_dir, func(fp string, file fs.DirEntry, err error) error {
 		conversion_progress++
-		conversion_percentage := float32(conversion_progress) / float32(total_file_count)
+		conversion_percentage := float64(conversion_progress) / float64(total_file_count)
 		if file.IsDir() {
 			undecoded_paths = append(undecoded_paths, file.Name())
 			runtime.EventsEmit(ctx, "conversion-progress", conversion_percentage)
@@ -55,11 +56,10 @@ func BatchConvert(inp_dir string, out_dir string, ctx context.Context) ([]string
 
 		if err != nil {
 			undecoded_paths = append(undecoded_paths, file.Name())
-			runtime.EventsEmit(ctx, "conversion-progress", conversion_percentage)
-			return nil
 		}
 
 		// fmt.Println("Jpeg encoding success for: ", filepath.Base(fp))
+		conversion_percentage = math.Round(conversion_percentage*1000) / 1000
 		runtime.EventsEmit(ctx, "conversion-progress", conversion_percentage)
 		return nil
 	})
