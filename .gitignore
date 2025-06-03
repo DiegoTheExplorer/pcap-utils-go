@@ -22,3 +22,5 @@ frontent/vite.config.js.timestamp-*
 frontend/vite.config.ts.timestamp-*
 frontend/.svelte-kit
 frontend/.svelte-kit
+# Dev only
+localAssets

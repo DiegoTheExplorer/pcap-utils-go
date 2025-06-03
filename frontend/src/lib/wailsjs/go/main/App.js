@@ -10,6 +10,18 @@ export function Get_dir_path(arg1) {
   return window['go']['main']['App']['Get_dir_path'](arg1);
 }
 
+export function Get_file_path(arg1) {
+  return window['go']['main']['App']['Get_file_path'](arg1);
+}
+
 export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
+}
+
+export function Read_gforms_names(arg1, arg2) {
+  return window['go']['main']['App']['Read_gforms_names'](arg1, arg2);
+}
+
+export function Read_verified_names(arg1, arg2) {
+  return window['go']['main']['App']['Read_verified_names'](arg1, arg2);
 }

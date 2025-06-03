@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"pcap-utils-go/gomods/sub_app/batch_img_conv"
+	"pcap-utils-go/gomods/sub_app/name_verification"
 	"pcap-utils-go/gomods/utils/fs_prompts"
 )
 
@@ -50,6 +51,11 @@ func (a *App) Get_dir_path(title string) string {
 	return dir_path
 }
 
+func (a *App) Get_file_path(title string) string {
+	file_path := fs_prompts.Get_file_path(a.ctx, title)
+	return file_path
+}
+
 func (a *App) Batch_img_conv(inp_dir string, out_dir string) ([]string, error) {
 	undecoded_files, err := batch_img_conv.BatchConvert(inp_dir, out_dir, a.ctx)
 
@@ -58,4 +64,24 @@ func (a *App) Batch_img_conv(inp_dir string, out_dir string) ([]string, error) {
 	}
 
 	return undecoded_files, err
+}
+
+func (a *App) Read_verified_names(filepath string, preview_count int) ([]string, error) {
+	verified_names, err := name_verification.ReadVerifiedNames(filepath, preview_count)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return verified_names, nil
+}
+
+func (a *App) Read_gforms_names(filepath string, preview_count int) ([]name_verification.CrimName, error) {
+	gforms_names, err := name_verification.ReadGformsNames(filepath, preview_count)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return gforms_names, nil
 }

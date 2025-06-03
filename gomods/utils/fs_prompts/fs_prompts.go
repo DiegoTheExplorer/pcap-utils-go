@@ -22,3 +22,15 @@ func Get_directory_path(ctx context.Context, title string) string {
 
 	return dir_path
 }
+
+func Get_file_path(ctx context.Context, title string) string {
+	file_path, err := runtime.OpenFileDialog(ctx, runtime.OpenDialogOptions{
+		Title: title,
+	})
+
+	if err != nil {
+		return ""
+	}
+
+	return file_path
+}
