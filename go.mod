@@ -6,6 +6,7 @@ toolchain go1.24.3
 
 require (
 	github.com/jdeng/goheif v0.0.0-20241115163857-e2bbb197c985
+	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/wailsapp/wails/v2 v2.10.1
 	golang.org/x/image v0.27.0
 )

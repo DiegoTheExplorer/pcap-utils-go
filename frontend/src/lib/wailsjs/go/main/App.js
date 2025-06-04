@@ -25,3 +25,7 @@ export function Read_gforms_names(arg1, arg2) {
 export function Read_verified_names(arg1, arg2) {
   return window['go']['main']['App']['Read_verified_names'](arg1, arg2);
 }
+
+export function Verify_names(arg1, arg2, arg3) {
+  return window['go']['main']['App']['Verify_names'](arg1, arg2, arg3);
+}

@@ -4,16 +4,24 @@ import (
 	"bufio"
 	"encoding/csv"
 	"fmt"
+	"math"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
 type CrimName struct {
 	FirstName  string `json:"fname"`
 	MiddleName string `json:"mname"`
 	LastName   string `json:"lname"`
+}
+
+type ForManualReview struct {
+	SubmittedName string      `json:"submitted_name"`
+	Matches       fuzzy.Ranks `json:"matches"`
 }
 
 func ReadVerifiedNames(filepath string, preview_count int) ([]string, error) {
@@ -117,11 +125,15 @@ func ReadGformsNames(filepath string, preview_count int) ([]CrimName, error) {
 		return nil, fmt.Errorf(strings.Join(err_string, ""))
 	}
 
+	var non_alphabetic_regex = regexp.MustCompile(`[^A-ZÑ ]+`)
 	for _, row := range csv_data[1:] {
+		first_name := non_alphabetic_regex.ReplaceAllString(strings.ToUpper(row[fname]), "")
+		middle_name := non_alphabetic_regex.ReplaceAllString(strings.ToUpper(row[mname]), "")
+		last_name := non_alphabetic_regex.ReplaceAllString(strings.ToUpper(row[lname]), "")
 		name := CrimName{
-			FirstName:  row[fname],
-			MiddleName: row[mname],
-			LastName:   row[lname],
+			FirstName:  first_name,
+			MiddleName: middle_name,
+			LastName:   last_name,
 		}
 
 		gforms_names = append(gforms_names, name)
@@ -135,4 +147,73 @@ func ReadGformsNames(filepath string, preview_count int) ([]CrimName, error) {
 	}
 
 	return gforms_names[0:preview_count], nil
+}
+
+func CompareNames(ver_names_fp string, gforms_names_fp string) ([]ForManualReview, error) {
+	gforms_names, err := ReadGformsNames(gforms_names_fp, math.MaxInt)
+	if err != nil {
+		return nil, err
+	}
+
+	verified_names, err := ReadVerifiedNames(ver_names_fp, math.MaxInt)
+	if err != nil {
+		return nil, err
+	}
+
+	var for_man_review []ForManualReview
+	fmt.Println("Number of names read from .csv: ", len(gforms_names))
+	for _, crim := range gforms_names {
+		var crim_arr []string
+
+		if crim.MiddleName == "" {
+			crim_arr = append(crim_arr, crim.LastName, crim.FirstName)
+		} else {
+			crim_arr = append(crim_arr, crim.LastName, crim.FirstName, crim.MiddleName)
+		}
+
+		crim_name := strings.TrimSpace(strings.Join(crim_arr, " "))
+
+		// Check for exact matches
+		var exact_match_found = false
+		for _, ver_name := range verified_names {
+			if ver_name == crim_name {
+				exact_match_found = true
+			}
+		}
+
+		if exact_match_found {
+			continue
+		}
+
+		// Use fuzzy to look for partial matches
+		match_res := fuzzy.RankFind(crim_name, verified_names)
+
+		switch match_res.Len() {
+		case 0:
+			for_man_review = append(for_man_review, ForManualReview{
+				SubmittedName: crim_name,
+				Matches:       nil,
+			})
+			continue
+		case 1:
+			// HACK: Redundant perfect match check
+			// but idk sometimes this doesn't catch
+			// perfect matches
+			if match_res[0].Distance == 0 {
+				continue
+			}
+			for_man_review = append(for_man_review, ForManualReview{
+				SubmittedName: crim_name,
+				Matches:       match_res,
+			})
+		default:
+			for_man_review = append(for_man_review, ForManualReview{
+				SubmittedName: crim_name,
+				Matches:       match_res,
+			})
+		}
+	}
+
+	fmt.Println("Number of names for manual review: ", len(for_man_review))
+	return for_man_review, nil
 }

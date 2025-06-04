@@ -13,3 +13,5 @@ export function Greet(arg1:string):Promise<string>;
 export function Read_gforms_names(arg1:string,arg2:number):Promise<Array<name_verification.CrimName>>;
 
 export function Read_verified_names(arg1:string,arg2:number):Promise<Array<string>>;
+
+export function Verify_names(arg1:string,arg2:string,arg3:string):Promise<Array<name_verification.ForManualReview>>;
